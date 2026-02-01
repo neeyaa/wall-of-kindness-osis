@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wall of Kindness - Valentine OSIS</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #333;
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #d6336c;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .form-section, .wall-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #d6336c;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    input, textarea {
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      padding: 0.8rem;
+      border-radius: 999px;
+      border: none;
+      background: #d6336c;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b02a55;
+    }
+
+    .wall-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .note {
+      background: #fff0f6;
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    .note::before {
+      content: "💌";
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 1.2rem;
+    }
+
+    .note .to {
+      font-weight: bold;
+      color: #d6336c;
+    }
+
+    .note .from {
+      font-style: italic;
+      font-size: 0.8rem;
+      text-align: right;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      color: #444;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Wall of Kindness 💖</h1>
+    <p>Sebar cinta, tebarkan kebaikan di Hari Valentine</p>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>Kirim Pesan Baikmu ✨</h2>
+      <form id="kindnessForm">
+        <input type="text" id="to" placeholder="Untuk siapa?" required />
+        <textarea id="message" placeholder="Tulis pesan positifmu..." required></textarea>
+        <input type="text" id="from" placeholder="Dari siapa? (boleh anonim)" />
+        <button type="submit">Kirim 💌</button>
+      </form>
+    </section>
+
+    <section class="wall-section">
+      <h2>Wall of Kindness</h2>
+      <div id="emptyState">Belum ada pesan. Jadilah yang pertama 🌸</div>
+      <div class="wall-grid" id="wall"></div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 Valentine Project
+  </footer>
+
+  <script>
+    const form = document.getElementById("kindnessForm");
+    const wall = document.getElementById("wall");
+    const emptyState = document.getElementById("emptyState");
+
+    const savedMessages = JSON.parse(localStorage.getItem("kindnessMessages")) || [];
+
+    function renderMessages() {
+      wall.innerHTML = "";
+      if (savedMessages.length === 0) {
+        emptyState.classList.remove("hidden");
+      } else {
+        emptyState.classList.add("hidden");
+      }
+
+      savedMessages.forEach((item) => {
+        const note = document.createElement("div");
+        note.className = "note";
+        note.innerHTML = `
+          <p class="to">Untuk: ${item.to}</p>
+          <p>${item.message}</p>
+          <p class="from">— ${item.from || "Anonim"}</p>
+        `;
+        wall.prepend(note);
+      });
+    }
+
+    renderMessages();
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const to = document.getElementById("to").value.trim();
+      const message = document.getElementById("message").value.trim();
+      const from = document.getElementById("from").value.trim();
+
+      if (!to || !message) return;
+
+      savedMessages.push({ to, message, from });
+      localStorage.setItem("kindnessMessages", JSON.stringify(savedMessages));
+
+      form.reset();
+      renderMessages();
+    });
+  </script>
+</body>
+</html>
